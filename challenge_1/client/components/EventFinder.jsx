@@ -17,7 +17,7 @@ class EventFinder extends React.Component {
     this.changePage = this.changePage.bind(this);
     this.findEvent = this.findEvent.bind(this);
   }
-  
+
   fetchEvents(keyword, page = 1) {
     axios.get(`/events?q=${keyword}&_page=${page}`)
       .then(results => {
@@ -27,7 +27,6 @@ class EventFinder extends React.Component {
           pageCount: helpers.getPageCount(results.headers['x-total-count'])
         })
       })
-      .then(() => console.log('FETCH EVENTS', this.state))
       .catch(err => console.log('ERROR FETCHING EVENTS', err));
   }
 
@@ -36,6 +35,9 @@ class EventFinder extends React.Component {
   }
 
   findEvent(e) {
+    if (e.keyCode !== undefined) { //If triggered by keypress event
+      if (e.nativeEvent.keyCode !== 13) { return; } //If not 'Enter' key
+    }
     const keyword = document.getElementById('searchTerm').value;
     this.fetchEvents(keyword);
   }
@@ -56,6 +58,9 @@ class EventFinder extends React.Component {
               marginPagesDisplayed={1}
               pageRangeDisplayed={1}
               onPageChange={this.changePage}
+              containerClassName={'pagination'}
+              subContainerClassName={'pages pagination'}
+              activeClassName={'active'}
               />
         }
       </div>
