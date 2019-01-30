@@ -18,17 +18,16 @@ class EventFinder extends React.Component {
       }
     }
     this.fetchEvents = this.fetchEvents.bind(this);
+    this.changePage = this.changePage.bind(this);
   }
 
   componentDidMount() {
     this.fetchEvents('pilgrim');
   }
 
-  fetchEvents(keyword) {
-    axios.get(`/events?q=${keyword}&_page=1`)
+  fetchEvents(keyword, page = 1) {
+    axios.get(`/events?q=${keyword}&_page=${page}`)
       .then(results => {
-
-        console.log(results.headers.link);
         return this.setState({
           events: results.data,
           pages: helpers.extractPageLinks(results.headers.link)
@@ -38,8 +37,8 @@ class EventFinder extends React.Component {
       .catch(err => console.log('ERROR FETCHING EVENTS', err));
   }
 
-  changePage(e) {
-
+  changePage(data) {
+    this.fetchEvents('pilgrim', data.selected + 1);
   }
 
   render() {
@@ -52,10 +51,10 @@ class EventFinder extends React.Component {
           previousLabel="previous"
           nextLabel="next"
           breakLabel="..."
-          pageCount={10}
+          pageCount={4}
           marginPagesDisplayed={1}
           pageRangeDisplayed={1}
-          onPageChange={() => console.log('paging')}
+          onPageChange={this.changePage}
           />
       </div>
     );
