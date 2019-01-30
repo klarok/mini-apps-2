@@ -1,8 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import EventFinder from './components/EventFinder.jsx';
 
-const App = () => {
-  return (<div>app here</div>);
-};
-
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(<EventFinder />, document.getElementById('app'));
