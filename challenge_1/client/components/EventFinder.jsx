@@ -9,28 +9,22 @@ class EventFinder extends React.Component {
   constructor() {
     super();
     this.state = {
+      keyword: 'pilgrim',
       events: [],
-      pages: {
-        first: null,
-        prev: null,
-        next: null,
-        last: null
-      }
+      pageCount: 0
     }
     this.fetchEvents = this.fetchEvents.bind(this);
     this.changePage = this.changePage.bind(this);
+    this.findEvent = this.findEvent.bind(this);
   }
-
-  componentDidMount() {
-    this.fetchEvents('pilgrim');
-  }
-
+  
   fetchEvents(keyword, page = 1) {
     axios.get(`/events?q=${keyword}&_page=${page}`)
       .then(results => {
         return this.setState({
+          keyword,
           events: results.data,
-          pages: helpers.extractPageLinks(results.headers.link)
+          pageCount: helpers.getPageCount(results.headers['x-total-count'])
         })
       })
       .then(() => console.log('FETCH EVENTS', this.state))
@@ -38,24 +32,32 @@ class EventFinder extends React.Component {
   }
 
   changePage(data) {
-    this.fetchEvents('pilgrim', data.selected + 1);
+    this.fetchEvents(this.state.keyword, data.selected + 1);
+  }
+
+  findEvent(e) {
+    const keyword = document.getElementById('searchTerm').value;
+    this.fetchEvents(keyword);
   }
 
   render() {
     return (
       <div>
         <h1>Historical Event Finder</h1>
-        <Search />
+        <Search clickHandler={this.findEvent} />
         <EventList events={this.state.events} />
-        <ReactPaginate
-          previousLabel="previous"
-          nextLabel="next"
-          breakLabel="..."
-          pageCount={4}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={1}
-          onPageChange={this.changePage}
-          />
+        {
+          (this.state.pageCount < 1) ? '' :
+            <ReactPaginate
+              previousLabel="previous"
+              nextLabel="next"
+              breakLabel="..."
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={1}
+              onPageChange={this.changePage}
+              />
+        }
       </div>
     );
   }

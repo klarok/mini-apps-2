@@ -1,10 +1,11 @@
 import React from 'react';
 
-const Search = () => {
+const Search = ({ clickHandler }) => {
   return (
     <div>
       <h2>Search</h2>
-      APP HERE!!!!!
+      Search: <input id="searchTerm" type="text"></input>
+      <button onClick={clickHandler}>Search</button>
     </div>
   );
 }
