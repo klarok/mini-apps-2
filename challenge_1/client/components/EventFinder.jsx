@@ -18,6 +18,10 @@ class EventFinder extends React.Component {
     this.findEvent = this.findEvent.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchEvents('pilgrim');
+  }
+
   fetchEvents(keyword, page = 1) {
     axios.get(`/events?q=${keyword}&_page=${page}`)
       .then(results => {

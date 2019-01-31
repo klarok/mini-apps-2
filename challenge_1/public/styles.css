@@ -15,3 +15,10 @@
   margin: 10px 0;
   padding: 10px 0;
 }
+
+.editorText {
+  font-size: .8em;
+  display: block;
+  width: 30em;
+  height: 10em;
+}
