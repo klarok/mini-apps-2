@@ -1,6 +1,7 @@
 import React from 'react';
 
 const Section = ({label, info}) => {
+  if (label === 'id') return '';
   return (
     <div>
       {label}: {info}
@@ -21,10 +22,10 @@ const EventEditor = ({data, toggleEditor, saveEdits}) => {
 }
 
 class Event extends React.Component {
-  constructor({event}) {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      event,
+      event: props.event,
       editorClosed: true
     };
     this.toggleEditor = this.toggleEditor.bind(this);
@@ -38,10 +39,12 @@ class Event extends React.Component {
 
   saveEdits(e) {
     e.preventDefault();
-    const data = e.currentTarget.children[0].value;
+    const oldEvent = Object.assign({}, this.state.event);
+    const updatedEvent = JSON.parse(e.currentTarget.children[0].value);
     this.setState({
-      event: JSON.parse(data)
+      event: updatedEvent
     });
+    this.props.saveToDatabase(oldEvent, updatedEvent);
   }
 
   render() {

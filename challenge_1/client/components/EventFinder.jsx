@@ -2,24 +2,20 @@ import React from 'react';
 import axios from 'axios';
 import Search from './Search.jsx';
 import EventList from './EventList.jsx';
-import helpers from '../helpers.js';
 import ReactPaginate from 'react-paginate';
 
 class EventFinder extends React.Component {
   constructor() {
     super();
     this.state = {
-      keyword: 'pilgrim',
+      keyword: '',
       events: [],
       pageCount: 0
     }
     this.fetchEvents = this.fetchEvents.bind(this);
     this.changePage = this.changePage.bind(this);
     this.findEvent = this.findEvent.bind(this);
-  }
-
-  componentDidMount() {
-    this.fetchEvents('pilgrim');
+    this.saveToDatabase = this.saveToDatabase.bind(this);
   }
 
   fetchEvents(keyword, page = 1) {
@@ -28,7 +24,7 @@ class EventFinder extends React.Component {
         return this.setState({
           keyword,
           events: results.data,
-          pageCount: helpers.getPageCount(results.headers['x-total-count'])
+          pageCount: Math.ceil(results.headers['x-total-count'] / 10)
         })
       })
       .catch(err => console.log('ERROR FETCHING EVENTS', err));
@@ -46,12 +42,16 @@ class EventFinder extends React.Component {
     this.fetchEvents(keyword);
   }
 
+  saveToDatabase(oldEvent, updatedEvent) {
+    axios.patch(`/events/${oldEvent.id}`, updatedEvent);
+  }
+
   render() {
     return (
       <div>
         <h1>Historical Event Finder</h1>
         <Search clickHandler={this.findEvent} />
-        <EventList events={this.state.events} />
+        <EventList events={this.state.events} saveToDatabase={this.saveToDatabase}/>
         {
           (this.state.pageCount < 1) ? '' :
             <ReactPaginate

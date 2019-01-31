@@ -26,7 +26,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx webpack",
-    "start": "json-server --watch data/db.json"
+    "start": "json-server --watch data/data.json"
   },
   "repository": {
     "type": "git",
