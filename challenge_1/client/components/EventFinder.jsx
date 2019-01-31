@@ -5,7 +5,7 @@ import EventList from './EventList.jsx';
 import ReactPaginate from 'react-paginate';
 
 class EventFinder extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       keyword: '',
