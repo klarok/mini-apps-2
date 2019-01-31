@@ -1,5 +1,4 @@
 import React from 'react';
-import helpers from '../helpers.js';
 
 const Section = ({label, info}) => {
   return (
@@ -9,17 +8,15 @@ const Section = ({label, info}) => {
   )
 }
 
-const EventEditor = ({data, isClosed, toggleEditor}) => {
+const EventEditor = ({data, toggleEditor, saveEdits}) => {
   return (
-    (isClosed) ? 
-      <button onClick={toggleEditor}>Edit</button> :
-      <div className="editor">
-        <textarea className="editorText"
-          defaultValue={JSON.stringify(data)}>
-        </textarea>
-        <button onClick={toggleEditor}>Cancel</button>
-        <button>Save</button>
-      </div> 
+    <form className="editor" onSubmit={saveEdits}>
+      <textarea className="editorText"
+        defaultValue={JSON.stringify(data)}>
+      </textarea>
+      <button onClick={toggleEditor}>Cancel</button>
+      <button type="submit">Save</button>
+    </form> 
   )
 }
 
@@ -31,10 +28,20 @@ class Event extends React.Component {
       editorClosed: true
     };
     this.toggleEditor = this.toggleEditor.bind(this);
+    this.saveEdits = this.saveEdits.bind(this);
   }
 
-  toggleEditor() {
+  toggleEditor(e) {
+    e.preventDefault();
     this.setState({ editorClosed: !this.state.editorClosed});
+  }
+
+  saveEdits(e) {
+    e.preventDefault();
+    const data = e.currentTarget.children[0].value;
+    this.setState({
+      event: JSON.parse(data)
+    });
   }
 
   render() {
@@ -45,9 +52,13 @@ class Event extends React.Component {
             return <Section key={index} label={key} info={this.state.event[key]} />
           })
         }
-        <EventEditor data={this.state.event}
-          isClosed={this.state.editorClosed} 
-          toggleEditor={this.toggleEditor}/>
+        {
+          (this.state.editorClosed) ? 
+            <button onClick={this.toggleEditor}>Edit</button> :
+            <EventEditor data={this.state.event}
+              toggleEditor={this.toggleEditor}
+              saveEdits={this.saveEdits} />
+        }
       </div>
     );
   }
